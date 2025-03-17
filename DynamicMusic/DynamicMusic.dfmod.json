@@ -11,5 +11,6 @@
         "Assets/Game/Mods/DynamicMusic/DynamicMusic.dfmod.json",
         "Assets/Game/Mods/DynamicMusic/Scripts/DynamicSongPlayer.cs",
         "Assets/Game/Mods/DynamicMusic/modsettings.json"
-    ]
+    ],
+    "ModPreCompile": true
 }
