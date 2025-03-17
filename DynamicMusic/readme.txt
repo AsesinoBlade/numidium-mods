@@ -115,6 +115,7 @@ TownHasMagesGuild - Boolean, true if the current town has a mage's guild
 BuildingIsOpen - Boolean, true if the building is open
 BookReaderMenu - Boolean, true if game is on BookReaderWindow 
 IsPlayerSubmerged - Boolean, true if player is swimming or underwater
+BlackRestMenu - Boolean, true if game is on DaggerfallRestWindow and player did not select Loiter
 
 3c. Value Lookup
 -------------------------

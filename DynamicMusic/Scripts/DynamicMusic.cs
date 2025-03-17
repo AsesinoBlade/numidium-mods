@@ -713,6 +713,17 @@ namespace DynamicMusic
                     var topWindow = DaggerfallUI.UIManager.TopWindow;
                     return negate ? !(topWindow is DaggerfallBookReaderWindow) : topWindow is DaggerfallBookReaderWindow;
                 },
+                ["blackrestmenu"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    var topWindow = DaggerfallUI.UIManager.TopWindow;
+                    var blackRestMenu = false;
+                    if (topWindow is DaggerfallRestWindow)
+                    {
+                        blackRestMenu = (topWindow as DaggerfallRestWindow).ParentPanel.BackgroundColor == Color.black;
+                    }
+
+                    return negate ? !blackRestMenu : blackRestMenu;
+                },
                 ["townhasmagesguild"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
                     var location = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.Key;
