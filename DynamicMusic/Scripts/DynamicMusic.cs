@@ -11,8 +11,10 @@ using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Mono.CSharp;
 using UnityEngine;
 using Wenzil.Console;
+using Event = UnityEngine.Event;
 
 namespace DynamicMusic
 {
@@ -546,6 +548,7 @@ namespace DynamicMusic
         private bool combatMusicIsEnabled;
         private bool resumeEnabled = true;
         private bool loopCustomTracks;
+        private bool showDebugMessages;
         private float previousTimeSinceStartup;
         private float deltaTime;
         private float resumeSeeker = 0f;
@@ -560,6 +563,21 @@ namespace DynamicMusic
         private GUIStyle guiStyle;
         private const string fileSearchPattern = "*.ogg";
         private const string modSignature = "Dynamic Music";
+
+        // Playlists settings
+        private bool PlayDungeonMusic = false;
+        bool PlayTownMusic = false;
+        bool PlayExplorationMusic = false;
+        bool PlayTavernMusic = false;
+        bool PlayShopMusic = false;
+        bool PlayTempleMusic = false;
+        bool PlayPalaceMusic = false;
+        bool PlayMagesGuildMusic = false;
+        bool PlayFightersGuildMusic = false;
+        bool PlayKnightsGuildMusic = false;
+        bool PlayArchaeologistsGuildMusic = false;
+        bool PlayBardsGuildMusic = false;
+        bool PlayProstitutesGuildMusic = false;
         private bool IsPlayerDetected
         {
             get
@@ -595,10 +613,29 @@ namespace DynamicMusic
         // Load settings that can change during runtime.
         private void LoadSettings(ModSettings settings, ModSettingsChange change)
         {
-            combatMusicIsEnabled = settings.GetValue<bool>("Options", "Enable Combat Music");
-            resumeEnabled = settings.GetValue<bool>("Options", "Enable Track Resume");
-            loopCustomTracks = settings.GetValue<bool>("Options", "Loop Custom Tracks");
+            combatMusicIsEnabled = settings.GetValue<bool>("Options", "EnableCombatMusic");
+            resumeEnabled = settings.GetValue<bool>("Options", "EnableTrackResume");
+            loopCustomTracks = settings.GetValue<bool>("Options", "LoopCustomTracks");
+            showDebugMessages = settings.GetValue<bool>("Debug", "ShowDebugMessages");
+
+            //Playlists settings
+            PlayDungeonMusic = settings.GetValue<bool>("PlayLists", "PlayDungeonMusic");
+            PlayTownMusic = settings.GetValue<bool>("PlayLists", "PlayTownMusic");
+            PlayExplorationMusic = settings.GetValue<bool>("PlayLists", "PlayExplorationMusic");
+            PlayTavernMusic = settings.GetValue<bool>("PlayLists", "PlayTavernMusic");
+            PlayShopMusic = settings.GetValue<bool>("PlayLists", "PlayShopMusic");
+            PlayTempleMusic = settings.GetValue<bool>("PlayLists", "PlayTempleMusic");
+            PlayPalaceMusic = settings.GetValue<bool>("PlayLists", "PlayPalaceMusic");
+            PlayMagesGuildMusic = settings.GetValue<bool>("PlayLists", "PlayMagesGuildMusic");
+            PlayFightersGuildMusic = settings.GetValue<bool>("PlayLists", "PlayFightersGuildMusic");
+            PlayKnightsGuildMusic = settings.GetValue<bool>("PlayLists", "PlayKnightsGuildMusic");
+            PlayArchaeologistsGuildMusic = settings.GetValue<bool>("PlayLists", "PlayArchaeologistsGuildMusic");
+            PlayBardsGuildMusic = settings.GetValue<bool>("PlayLists", "PlayBardsGuildMusic");
+            PlayProstitutesGuildMusic = settings.GetValue<bool>("PlayLists", "PlayProstitutesGuildMusic");
         }
+
+
+
 
         private void Start()
         {
@@ -616,6 +653,93 @@ namespace DynamicMusic
             var conditionLibrary = new Dictionary<string, ConditionMethod>
             {
                 // Vanilla conditions:
+
+                //Playlist enablers
+                ["playdungeonmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayDungeonMusic : PlayDungeonMusic;
+                },
+                ["playtownmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayTownMusic : PlayTownMusic;
+                },
+                ["playexplorationmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayExplorationMusic : PlayExplorationMusic;
+                },
+                ["playtavernmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayTavernMusic : PlayTavernMusic;
+                },
+                ["playshopmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayShopMusic : PlayShopMusic;
+                },
+                ["playtemplemusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayTempleMusic : PlayTempleMusic;
+                },
+                ["playpalacemusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayPalaceMusic : PlayPalaceMusic;
+                },
+                ["playmagesguildmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayMagesGuildMusic : PlayMagesGuildMusic;
+                },
+                ["playfightersguildmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayFightersGuildMusic : PlayFightersGuildMusic;
+                },
+                ["playknightsguildmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayKnightsGuildMusic : PlayKnightsGuildMusic;
+                },
+                ["playarchaeologistsguildmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayArchaeologistsGuildMusic : PlayArchaeologistsGuildMusic;
+                },
+                ["playbardsguildmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayBardsGuildMusic : PlayBardsGuildMusic;
+                },
+                ["playprostituesguildmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayProstitutesGuildMusic : PlayProstitutesGuildMusic;
+                },
+
+
+                ["townhasmagesguild"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    var location = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.Key;
+
+                    byte guildFlags = (byte)((location >> 16) & 0xff);
+                    bool hasMagesGuildFlag = ((byte)(guildFlags << 5) >> 7) > 0;
+
+                    return negate ? !hasMagesGuildFlag : hasMagesGuildFlag;
+                },
+                ["buildingisopen"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                        return false;
+
+                    int buildingType = (int)GameManager.Instance.PlayerEnterExit.BuildingType;
+                    if (buildingType < 0 || buildingType > 17)
+                        return false;
+
+                    var open = PlayerActivate.openHours[buildingType];
+                    var close = PlayerActivate.closeHours[buildingType];
+
+                    if (open == 0 && close == 0)
+                        return false;
+
+                    if (open == 0 && close == 25)
+                        return true;
+
+                    var hour = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour;
+                    var isOpen = hour >= open && hour < close;
+                    return negate ? !isOpen : isOpen;
+                },
                 ["night"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
                     return negate ? !conditions.IsNight : conditions.IsNight;
@@ -631,6 +755,20 @@ namespace DynamicMusic
                 ["dungeoncastle"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
                     return negate ? !conditions.IsInDungeonCastle : conditions.IsInDungeonCastle;
+                },
+                ["time"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    var result = false;
+                    foreach (var parameter in parameters)
+                        result |= DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour == parameter;
+                    return negate ? !result : result;
+                },
+                ["location"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    var result = false;
+                    foreach (var parameter in parameters)
+                        result |= conditions.LocationType == (DFRegion.LocationTypes)parameter;
+                    return negate ? !result : result;
                 },
                 ["locationtype"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
@@ -1086,7 +1224,7 @@ namespace DynamicMusic
 
         private void OnGUI()
         {
-            if (Event.current.type.Equals(EventType.Repaint) && DefaultCommands.showDebugStrings)
+            if (Event.current.type.Equals(EventType.Repaint) && (DefaultCommands.showDebugStrings || showDebugMessages))
             {
                 var playing = dynamicSongPlayer.IsPlaying ? "Playing" : "Stopped";
                 var text = $"Dynamic Music - {playing} - State: {currentState} - Playlist: {debugPlaylistName} - Song: {debugSongName}";

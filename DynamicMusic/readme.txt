@@ -97,6 +97,22 @@ Season - Function, True if the current in-game season matches the specified seas
 Month - Function, True if the current in-game month matches the specified month code (see 3cxi)
 StartMenu - Boolean, True if the game is on the starting menu (the screen with new game, load game, and exit game)
 Combat - Boolean, True if player is in combat
+PlayDungeonMusic - Boolean, True if player enabled PlayDungeonMusic in settings
+PlayTownMusic - Boolean, True if player enabled PlayTownMusic in settings
+PlayExplorationMusic - Boolean, True if player enabled PlayExplorationMusic in settings
+PlayTavernMusic - Boolean, True if player enabled PlayTavernMusic in settings
+PlayShopMusic - Boolean, True if player enabled PlayShopMusic in settings
+PlayTempleMusic - Boolean, True if player enabled PlayTempleMusic in settings
+PlayPalaceMusic - Boolean, True if player enabled PlayPalaceMusic in settings
+PlayMagesGuildMusic - Boolean, True if player enabled PlayMagesGuildMusic in settings
+PlayFightersGuildMusic - Boolean, True if player enabled PlayFightersGuildMusic in settings
+PlayKnightsGuildMusic - Boolean, True if player enabled PlayKnightsGuildMusic in settings
+PlayArchaeologistsGuildMusic - Boolean, True if player enabled PlayArchaeologistsGuildMusic in settings
+PlayBardsGuildMusic - Boolean, True if player enabled PlayBardsGuildMusic in settings
+PlayProstitutesGuildMusic - Boolean, True if player enabled PlayProstitutesGuildMusic in settings
+Time - Function, True if game hour matches one of the paramaters (hours are in 24 hour format)
+TownHasMagesGuild - Boolean, true if the current town has a mage's guild
+BuildingIsOpen - Boolean, true if the building is open
 
 
 3c. Value Lookup
