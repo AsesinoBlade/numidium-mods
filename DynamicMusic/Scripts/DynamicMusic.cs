@@ -1266,7 +1266,7 @@ namespace DynamicMusic
 
         private void PrintParserError(string text, ushort lineNumber, string token)
         {
-            Debug.Log($"{modSignature} user-defined playlist: {text} at line {lineNumber}: {token}");
+            Debug.LogError($"{modSignature} user-defined playlist: {text} at line {lineNumber}: {token}");
         }
 
         private void HandleLocationChange()
