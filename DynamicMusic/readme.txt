@@ -113,7 +113,8 @@ PlayProstitutesGuildMusic - Boolean, True if player enabled PlayProstitutesGuild
 Time - Function, True if game hour matches one of the paramaters (hours are in 24 hour format)
 TownHasMagesGuild - Boolean, true if the current town has a mage's guild
 BuildingIsOpen - Boolean, true if the building is open
-
+BookReaderMenu - Boolean, true if game is on BookReaderWindow 
+IsPlayerSubmerged - Boolean, true if player is swimming or underwater
 
 3c. Value Lookup
 -------------------------

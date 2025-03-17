@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Mono.CSharp;
+using TravelOptions;
 using UnityEngine;
 using Wenzil.Console;
 using Event = UnityEngine.Event;
@@ -707,8 +708,11 @@ namespace DynamicMusic
                 {
                     return negate ? !PlayProstitutesGuildMusic : PlayProstitutesGuildMusic;
                 },
-
-
+                ["bookreadermenu"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    var topWindow = DaggerfallUI.UIManager.TopWindow;
+                    return negate ? !(topWindow is DaggerfallBookReaderWindow) : topWindow is DaggerfallBookReaderWindow;
+                },
                 ["townhasmagesguild"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
                     var location = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.Key;
@@ -717,6 +721,12 @@ namespace DynamicMusic
                     bool hasMagesGuildFlag = ((byte)(guildFlags << 5) >> 7) > 0;
 
                     return negate ? !hasMagesGuildFlag : hasMagesGuildFlag;
+                    
+                },
+                ["isplayersubmerged"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    var isPlayerSubmerged = GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged || GameManager.Instance.PlayerEnterExit.IsPlayerSwimming;
+                    return negate ? !isPlayerSubmerged : isPlayerSubmerged;
                 },
                 ["buildingisopen"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
