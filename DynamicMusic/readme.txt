@@ -116,6 +116,7 @@ BuildingIsOpen - Boolean, true if the building is open
 BookReaderMenu - Boolean, true if game is on BookReaderWindow 
 IsPlayerSubmerged - Boolean, true if player is swimming or underwater
 BlackRestMenu - Boolean, true if game is on DaggerfallRestWindow and player did not select Loiter
+ChangeVolume - Boolean, true if paramater is between 0 and 100, sets volume to that value
 
 3c. Value Lookup
 -------------------------

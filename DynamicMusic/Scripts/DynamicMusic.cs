@@ -548,6 +548,9 @@ namespace DynamicMusic
         private bool customTrackQueued;
         private byte combatPlaylistIndex;
         private bool combatMusicIsEnabled;
+        private float tempVolume;
+        private float currentVolume;
+        private float previousVolume;
         private bool resumeEnabled = true;
         private bool loopCustomTracks;
         private bool showDebugMessages;
@@ -645,6 +648,8 @@ namespace DynamicMusic
             var settings = mod.GetSettings();
             LoadSettings(settings, new ModSettingsChange());
 
+            currentVolume = DaggerfallUnity.Settings.SoundVolume;
+            previousVolume = currentVolume;
             const string soundDirectory = "Sound";
             const string baseDirectory = "DynMusic";
             var basePath = Path.Combine(Application.streamingAssetsPath, soundDirectory, baseDirectory);
@@ -761,6 +766,13 @@ namespace DynamicMusic
                     var hour = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour;
                     var isOpen = hour >= open && hour < close;
                     return negate ? !isOpen : isOpen;
+                },
+                ["changevolume"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    if (parameters[0] < 0 || parameters[0] > 100)
+                        return false;
+                    tempVolume = parameters[0] / 100f;
+                    return true;
                 },
                 ["night"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
@@ -1124,7 +1136,8 @@ namespace DynamicMusic
                         break;
                     }
 
-                    dynamicSongPlayer.AudioSource.volume = DaggerfallUnity.Settings.MusicVolume;
+                    dynamicSongPlayer.AudioSource.volume = currentVolume;
+                    previousVolume = currentVolume;
                     PlayNormalTrack(previousPlaylist);
                     lastState = State.Normal;
                     break;
@@ -1132,7 +1145,7 @@ namespace DynamicMusic
                     if (currentMusicType == MusicType.Normal)
                     {
                         fadeOutTime += deltaTime;
-                        dynamicSongPlayer.AudioSource.volume = Mathf.Lerp(DaggerfallUnity.Settings.MusicVolume, 0f, fadeOutTime / fadeOutLength);
+                        dynamicSongPlayer.AudioSource.volume = Mathf.Lerp(previousVolume, 0f, fadeOutTime / fadeOutLength);
                         if (fadeOutTime >= fadeOutLength)
                         {
                             // End fade when time elapsed.
@@ -1143,7 +1156,7 @@ namespace DynamicMusic
                     else if (currentMusicType == MusicType.Combat)
                     {
                         fadeOutTime += deltaTime;
-                        dynamicSongPlayer.AudioSource.volume = Mathf.Lerp(DaggerfallUnity.Settings.MusicVolume, 0f, fadeOutTime / fadeOutLength);
+                        dynamicSongPlayer.AudioSource.volume = Mathf.Lerp(previousVolume, 0f, fadeOutTime / fadeOutLength);
                         // End fade when time elapsed.
                         if (fadeOutTime >= fadeOutLength)
                         {
@@ -1168,16 +1181,22 @@ namespace DynamicMusic
                         fadeInTime = 0f;
                         currentState = State.Normal;
                         // Syncing the volume here instead of waiting for the next frame prevents audio hiccup.
-                        dynamicSongPlayer.AudioSource.volume = DaggerfallUnity.Settings.MusicVolume;
+                        dynamicSongPlayer.AudioSource.volume = currentVolume;
+                        previousVolume = currentVolume;
                     }
                     else
-                        dynamicSongPlayer.AudioSource.volume = Mathf.Lerp(0f, DaggerfallUnity.Settings.MusicVolume, fadeInTime / fadeInLength);
+                    {
+                        dynamicSongPlayer.AudioSource.volume = Mathf.Lerp(0f, currentVolume, fadeInTime / fadeInLength);
+                    }
+
                     lastState = State.FadingIn;
                     break;
                 case State.Combat:
                     {
                         // Handle volume/looping.
-                        dynamicSongPlayer.AudioSource.volume = DaggerfallUnity.Settings.MusicVolume;
+                        dynamicSongPlayer.AudioSource.volume = currentVolume;
+
+                        previousVolume = currentVolume;
                         if (lastState != State.Combat)
                         {
                             combatPlaylist = customPlaylists[(int)MusicPlaylist.Combat]; // Start with default.
@@ -1249,7 +1268,7 @@ namespace DynamicMusic
             if (Event.current.type.Equals(EventType.Repaint) && (DefaultCommands.showDebugStrings || showDebugMessages))
             {
                 var playing = dynamicSongPlayer.IsPlaying ? "Playing" : "Stopped";
-                var text = $"Dynamic Music - {playing} - State: {currentState} - Playlist: {debugPlaylistName} - Song: {debugSongName}";
+                var text = $"Dynamic Music - {playing} - State: {currentState} - Playlist: {debugPlaylistName} - Song: {debugSongName} - Volume: {Mathf.RoundToInt(currentVolume * 100)}";
                 GUI.Label(new Rect(10, 50, 800, 24), text, guiStyle);
                 GUI.Label(new Rect(8, 48, 800, 24), text);
             }
@@ -1257,6 +1276,7 @@ namespace DynamicMusic
 
         private int GetUserDefinedPlaylistKey(Dictionary<int, ConditionUsage[]> conditionSets, ref Conditions conditions)
         {
+            tempVolume = 0;
             foreach (var key in conditionSets.Keys)
             {
                 var eval = true;
@@ -1269,6 +1289,10 @@ namespace DynamicMusic
 
                 if (eval)
                 {
+
+                    if (tempVolume > 0)
+                        currentVolume = tempVolume;
+                    tempVolume = 0;
                     return key;
                 }
             }
