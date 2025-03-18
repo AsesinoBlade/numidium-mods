@@ -11,6 +11,7 @@ using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using DaggerfallWorkshop.Game.Weather;
 using Mono.CSharp;
 using TravelOptions;
 using UnityEngine;
@@ -1338,6 +1339,11 @@ namespace DynamicMusic
             var dfUnity = DaggerfallUnity.Instance;
             var topWindow = DaggerfallUI.UIManager.TopWindow;
             conditions = new Conditions();
+            // initialize values
+            conditions.BuildingType = DFLocation.BuildingTypes.None;
+            conditions.LocationType = DFRegion.LocationTypes.None;
+
+            //
             if (gameManager.StateManager.CurrentState == StateManager.StateTypes.Start && !(topWindow is DaggerfallVidPlayerWindow) && !(topWindow is DaggerfallHUD))
             {
                 if (topWindow is DaggerfallStartWindow ||
@@ -1357,6 +1363,7 @@ namespace DynamicMusic
             // Exteriors
             if (!playerEnterExit.IsPlayerInside)
             {
+                conditions.BuildingType = DFLocation.BuildingTypes.None;
                 if (localPlayerGPS.IsPlayerInLocationRect)
                 {
                     conditions.LocationType = localPlayerGPS.CurrentLocationType;
