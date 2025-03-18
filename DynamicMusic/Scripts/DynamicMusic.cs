@@ -745,6 +745,17 @@ namespace DynamicMusic
                     var isPlayerSubmerged = GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged || GameManager.Instance.PlayerEnterExit.IsPlayerSwimming;
                     return negate ? !isPlayerSubmerged : isPlayerSubmerged;
                 },
+                ["hasmusicians"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                        return false;
+
+                    if (GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData.buildingType != DFLocation.BuildingTypes.Tavern)
+                        return false;
+
+                    var hasMusicians = FindMusicians();
+                    return negate ? !hasMusicians : hasMusicians;
+                },
                 ["buildingisopen"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
                     if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
@@ -1299,6 +1310,99 @@ namespace DynamicMusic
 
             return -1;
         }
+
+        public static bool NameFound(Transform transform, System.Func<Transform, bool> query)
+        {
+            //   AddHudText("name found");
+            if (query(transform))
+            {
+                return true;
+            }
+
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                var result = NameFound(transform.GetChild(i), query);
+                if (result)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool ObjectExists(string obj)
+        {
+            //AddHudText("Object Exists");
+            var interior = GameObject.Find("Interior");
+
+            if (interior == null)
+                return false;
+
+            return NameFound(interior.transform, x => x.name.Contains(obj));
+        }
+
+        public static bool FindMusicians()
+        {
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.182, Index=5]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.182, Index=6]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.182, Index=36]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.182, Index=49]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.182, Index=50]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.182, Index=51]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.182, Index=52"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.182, Index=53]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.184, Index=3]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.186, Index=6]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.186, Index=7]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.186, Index=50]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.186, Index=51]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.186, Index=52]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.186, Index=53]"))
+                return true;
+
+            if (ObjectExists("DaggerfallBillboard [TEXTURE.186, Index=54]"))
+                return true;
+
+            if (ObjectExists("[TEXTURE.197, Index=5]"))
+                return true;
+
+            if (ObjectExists("ID=41120"))
+                return true;
+
+            return false;
+
+        }
+
 
         private void PrintParserError(string text, ushort lineNumber, string token)
         {
