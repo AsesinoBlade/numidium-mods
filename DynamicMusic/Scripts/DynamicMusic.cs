@@ -568,6 +568,7 @@ namespace DynamicMusic
         private GUIStyle guiStyle;
         private const string fileSearchPattern = "*.ogg";
         private const string modSignature = "Dynamic Music";
+        private float deltaVolume = 0;
 
         // Playlists settings
         private bool PlayDungeonMusic = false;
@@ -1129,9 +1130,17 @@ namespace DynamicMusic
             switch (currentState)
             {
                 case State.Normal:
+                    // Fade out when player presses next song key
+                    if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.PageUp))
+                    {
+                        currentCustomTrack = string.Empty;
+                        //currentState = State.FadingOut;
+                        break;
+                    }
                     // Fade out when switching playlists.
                     if (currentPlaylist != previousPlaylist && previousPlaylist != (int)MusicPlaylist.None)
                     {
+                        deltaVolume = 0;
                         currentState = State.FadingOut;
                         break;
                     }
@@ -1154,6 +1163,7 @@ namespace DynamicMusic
                     lastState = State.Normal;
                     break;
                 case State.FadingOut:
+                    deltaVolume = 0;
                     if (currentMusicType == MusicType.Normal)
                     {
                         fadeOutTime += deltaTime;
@@ -1184,6 +1194,7 @@ namespace DynamicMusic
                     lastState = State.FadingOut;
                     break;
                 case State.FadingIn:
+                    deltaVolume = 0;
                     if (dynamicSongPlayer.AudioSource.volume == 0f)
                         PlayNormalTrack(previousPlaylist);
                     fadeInTime += deltaTime;
@@ -1275,8 +1286,33 @@ namespace DynamicMusic
             detectionCheckDelta = 0f;
         }
 
+        private void CheckVolumeAdjust(Event e)
+        {
+            bool eventDown = (e.modifiers & EventModifiers.Control) != 0;
+
+            if (!eventDown)
+                return;
+
+            e.Use();
+
+            switch (e.keyCode)
+            {
+                case KeyCode.UpArrow:
+                    deltaVolume = Mathf.Clamp(deltaVolume + 0.025f,-1f,1f);
+                    break;
+                case KeyCode.DownArrow:
+                    deltaVolume = Mathf.Clamp(deltaVolume - 0.025f, -1f, 1f);
+                    break;
+                default:
+                    break;
+            } 
+        }
+
         private void OnGUI()
         {
+            if (Event.current.rawType == EventType.KeyDown)
+                CheckVolumeAdjust(Event.current);
+
             if (Event.current.type.Equals(EventType.Repaint) && (DefaultCommands.showDebugStrings || showDebugMessages))
             {
                 var playing = dynamicSongPlayer.IsPlaying ? "Playing" : "Stopped";
@@ -1303,9 +1339,9 @@ namespace DynamicMusic
                 {
 
                     if (tempVolume > 0)
-                        currentVolume = tempVolume;
+                        currentVolume = Mathf.Clamp(tempVolume + deltaVolume, 0f, 1f);
                     else
-                        currentVolume = DaggerfallUnity.Settings.MusicVolume;
+                        currentVolume = Mathf.Clamp(DaggerfallUnity.Settings.MusicVolume + deltaVolume, 0f, 1f);
                     tempVolume = 0;
                     return key;
                 }
