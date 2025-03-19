@@ -804,8 +804,9 @@ namespace DynamicMusic
                 ["time"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
                     var result = false;
+                    var hour = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour;
                     foreach (var parameter in parameters)
-                        result |= DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour == parameter;
+                        result |=  hour == parameter;
                     return negate ? !result : result;
                 },
                 ["location"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
