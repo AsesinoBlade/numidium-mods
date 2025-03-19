@@ -1304,6 +1304,8 @@ namespace DynamicMusic
 
                     if (tempVolume > 0)
                         currentVolume = tempVolume;
+                    else
+                        currentVolume = DaggerfallUnity.Settings.MusicVolume;
                     tempVolume = 0;
                     return key;
                 }
