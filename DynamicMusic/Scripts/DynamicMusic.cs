@@ -954,6 +954,12 @@ namespace DynamicMusic
                         var tokenIndex = 2;
                         while (tokenIndex < tokens.Length)
                         {
+                            // Check if the token is all spaces
+                            if (string.IsNullOrWhiteSpace(tokens[tokenIndex]))
+                            {
+                                break;
+                            }
+
                             var negate = false;
                             if (tokens[tokenIndex].ToLower() == "not")
                             {
@@ -961,7 +967,7 @@ namespace DynamicMusic
                                 negate = true;
                             }
 
-                            if (!conditionLibrary.ContainsKey(tokens[tokenIndex].ToLower()))
+                            if (!conditionLibrary.ContainsKey(tokens[tokenIndex].ToLower().Trim()))
                             {
 
                                 PrintParserError($"Unrecognized condition", lineCounter, tokens[tokenIndex]);
@@ -970,7 +976,7 @@ namespace DynamicMusic
                             }
                             else
                             {
-                                var conditionToken = tokens[tokenIndex++].ToLower();
+                                var conditionToken = tokens[tokenIndex++].ToLower().Trim();
                                 if (!lineContainsError && conditionToken == combatToken)
                                     isCombatPlaylist = true;
                                 else if (!lineContainsError)
@@ -1446,7 +1452,7 @@ namespace DynamicMusic
 
         private void PrintParserError(string text, ushort lineNumber, string token)
         {
-            Debug.LogError($"{modSignature} user-defined playlist: <{text}> at line {lineNumber}: <{token}>");
+            Debug.LogError($"{modSignature} user-defined playlist: {text} at line {lineNumber}: <{token}>");
         }
 
         private void HandleLocationChange()
