@@ -711,7 +711,7 @@ namespace DynamicMusic
                 {
                     return negate ? !PlayBardsGuildMusic : PlayBardsGuildMusic;
                 },
-                ["playprostituesguildmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                ["playprostitutesguildmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
                     return negate ? !PlayProstitutesGuildMusic : PlayProstitutesGuildMusic;
                 },
@@ -963,6 +963,7 @@ namespace DynamicMusic
 
                             if (!conditionLibrary.ContainsKey(tokens[tokenIndex].ToLower()))
                             {
+
                                 PrintParserError($"Unrecognized condition", lineCounter, tokens[tokenIndex]);
                                 lineContainsError = true;
                                 break;
@@ -1445,7 +1446,7 @@ namespace DynamicMusic
 
         private void PrintParserError(string text, ushort lineNumber, string token)
         {
-            Debug.LogError($"{modSignature} user-defined playlist: {text} at line {lineNumber}: {token}");
+            Debug.LogError($"{modSignature} user-defined playlist: <{text}> at line {lineNumber}: <{token}>");
         }
 
         private void HandleLocationChange()
