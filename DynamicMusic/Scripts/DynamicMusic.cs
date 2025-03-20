@@ -554,6 +554,7 @@ namespace DynamicMusic
         private bool resumeEnabled = true;
         private bool loopCustomTracks;
         private bool showDebugMessages;
+        private int lineAdjustForMusicKey;
         private float previousTimeSinceStartup;
         private float deltaTime;
         private float resumeSeeker = 0f;
@@ -918,13 +919,17 @@ namespace DynamicMusic
                     userCombatConditionSets = new Dictionary<int, ConditionUsage[]>();
                     ushort lineCounter = 0;
                     string line;
+                    var foundParmLines = false;
                     while ((line = file.ReadLine()) != null)
                     {
                         line = line.Trim(); // Remove whitespace to the left and right.
                         lineCounter++;
                         if (line == string.Empty || line[0] == '#') // # = Comment/memo line, ignore.
+                        {
+                            if (!foundParmLines)
+                                lineAdjustForMusicKey++;
                             continue;
-                        // Get track names from directory.
+                        }                        // Get track names from directory.
                         List<string> trackList;
                         var lineContainsError = false;
                         var tokens = line.Split(' ', ',');
@@ -1010,6 +1015,7 @@ namespace DynamicMusic
 
                         if (lineContainsError)
                             continue; // Don't tolerate errors.
+                        foundParmLines = true;
                         var conditionSets = isCombatPlaylist ? userCombatConditionSets : userDefinedConditionSets;
                         conditionSets[playlistKey] = conditionSet.ToArray();
                     }
@@ -1323,7 +1329,7 @@ namespace DynamicMusic
             if (Event.current.type.Equals(EventType.Repaint) && (DefaultCommands.showDebugStrings || showDebugMessages))
             {
                 var playing = dynamicSongPlayer.IsPlaying ? "Playing" : "Stopped";
-                var text = $"Dynamic Music - {playing} - State: {currentState} - Playlist: {debugPlaylistName} - Song: {debugSongName} - Volume: {Mathf.RoundToInt(currentVolume * 100)}";
+                var text = $"Dynamic Music - {playing} - State: {currentState} - Playlist:{currentPlaylist - (int)MusicPlaylist.None + lineAdjustForMusicKey}: {debugPlaylistName} - Song: {debugSongName} - Volume: {Mathf.RoundToInt(currentVolume * 100)}";
                 GUI.Label(new Rect(10, 50, 800, 24), text, guiStyle);
                 GUI.Label(new Rect(8, 48, 800, 24), text);
             }
