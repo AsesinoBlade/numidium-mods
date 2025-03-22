@@ -28,6 +28,13 @@
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 },
                 {
+                    "Value": false,
+                    "Name": "PlayNightExplorationMusic",
+                    "Description": null,
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
                     "Value": true,
                     "Name": "PlayTavernMusic",
                     "Description": null,

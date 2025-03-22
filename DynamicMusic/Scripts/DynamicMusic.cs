@@ -572,9 +572,10 @@ namespace DynamicMusic
         private float deltaVolume = 0;
 
         // Playlists settings
-        private bool PlayDungeonMusic = false;
+        bool PlayDungeonMusic = false;
         bool PlayTownMusic = false;
         bool PlayExplorationMusic = false;
+        bool PlayNightExplorationMusic = false;
         bool PlayTavernMusic = false;
         bool PlayShopMusic = false;
         bool PlayTempleMusic = false;
@@ -675,6 +676,10 @@ namespace DynamicMusic
                 ["playexplorationmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
                     return negate ? !PlayExplorationMusic : PlayExplorationMusic;
+                },
+                ["playnightexplorationmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlayNightExplorationMusic : PlayNightExplorationMusic;
                 },
                 ["playtavernmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
