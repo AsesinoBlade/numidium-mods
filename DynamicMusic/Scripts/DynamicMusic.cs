@@ -570,6 +570,7 @@ namespace DynamicMusic
         private const string fileSearchPattern = "*.ogg";
         private const string modSignature = "Dynamic Music";
         private float deltaVolume = 0;
+        private bool isSlowTraveling = false;
 
         // Playlists settings
         bool PlayDungeonMusic = false;
@@ -616,6 +617,23 @@ namespace DynamicMusic
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             StartGameBehaviour.OnStartGame += StartGameBehaviour_OnStartGame;
             mod.LoadSettingsCallback = Instance.LoadSettings;
+            mod.MessageReceiver = Instance.MessageReceiver;
+        }
+
+
+        private void MessageReceiver(string message, object data, DFModMessageCallback callBack)
+        {
+            switch (message)
+            {
+                case "toggle":
+                    if (data is bool)
+                        isSlowTraveling = !(bool)data;
+                    break;
+
+                default:
+                    Debug.LogErrorFormat("{0}: unknown message received ({1}).", this, message);
+                    break;
+            }
         }
 
         // Load settings that can change during runtime.
@@ -751,6 +769,10 @@ namespace DynamicMusic
                 {
                     var isPlayerSubmerged = GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged || GameManager.Instance.PlayerEnterExit.IsPlayerSwimming;
                     return negate ? !isPlayerSubmerged : isPlayerSubmerged;
+                },
+                ["isplayerslowtraveling"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !isSlowTraveling : isSlowTraveling;
                 },
                 ["hasmusicians"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
