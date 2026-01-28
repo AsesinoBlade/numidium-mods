@@ -573,6 +573,7 @@ namespace DynamicMusic
         private bool isSlowTraveling = false;
 
         // Playlists settings
+        bool PlaySilenceAllMusic = false;
         bool PlayDungeonMusic = false;
         bool PlayTownMusic = false;
         bool PlayExplorationMusic = false;
@@ -636,6 +637,12 @@ namespace DynamicMusic
             }
         }
 
+        public void Awake()
+        {
+                   guiStyle = new GUIStyle();
+                   guiStyle.normal.textColor = Color.black;
+        }
+
         // Load settings that can change during runtime.
         private void LoadSettings(ModSettings settings, ModSettingsChange change)
         {
@@ -645,6 +652,7 @@ namespace DynamicMusic
             showDebugMessages = settings.GetValue<bool>("Debug", "ShowDebugMessages");
 
             //Playlists settings
+            PlaySilenceAllMusic = settings.GetValue<bool>("PlayLists", "PlaySilenceAllMusic");
             PlayDungeonMusic = settings.GetValue<bool>("PlayLists", "PlayDungeonMusic");
             PlayTownMusic = settings.GetValue<bool>("PlayLists", "PlayTownMusic");
             PlayExplorationMusic = settings.GetValue<bool>("PlayLists", "PlayExplorationMusic");
@@ -683,6 +691,10 @@ namespace DynamicMusic
                 // Vanilla conditions:
 
                 //Playlist enablers
+                ["playsilenceallmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
+                {
+                    return negate ? !PlaySilenceAllMusic : PlaySilenceAllMusic;
+                },
                 ["playdungeonmusic"] = delegate (ref Conditions conditions, bool negate, int[] parameters)
                 {
                     return negate ? !PlayDungeonMusic : PlayDungeonMusic;

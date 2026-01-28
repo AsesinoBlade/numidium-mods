@@ -12,5 +12,6 @@
         "Assets/Game/Mods/DynamicMusic/Scripts/DynamicSongPlayer.cs",
         "Assets/Game/Mods/DynamicMusic/modsettings.json"
     ],
-    "ModPreCompile": true
+    "ModPreCompile": true,
+    "ModPatch": false
 }
