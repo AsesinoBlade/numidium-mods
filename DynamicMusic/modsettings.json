@@ -7,6 +7,13 @@
             "IsAdvanced": false,
             "Keys": [
                 {
+                    "Value": false,
+                    "Name": "PlaySilenceAllMusic",
+                    "Description": "Enable/Disable all music",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
                     "Value": true,
                     "Name": "PlayDungeonMusic",
                     "Description": null,
